@@ -1,848 +1,290 @@
 <!DOCTYPE html>
 <html lang="ru">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Онлайн-тест: Гласные и согласные (орфография)</title>
-    <style>
-        * {
-            box-sizing: border-box;
-            margin: 0;
-            padding: 0;
-        }
-
-        body {
-            font-family: 'Segoe UI', Roboto, system-ui, sans-serif;
-            background: linear-gradient(145deg, #f5f9ff 0%, #e6f0fa 100%);
-            min-height: 100vh;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            padding: 20px;
-        }
-
-        .test-container {
-            max-width: 820px;
-            width: 100%;
-            background: #ffffff;
-            border-radius: 42px;
-            box-shadow: 0 25px 50px -10px rgba(0, 30, 60, 0.25), 0 0 0 1px rgba(255, 255, 255, 0.6) inset;
-            padding: 40px 36px;
-            transition: all 0.2s;
-        }
-
-        h1 {
-            font-size: 2rem;
-            font-weight: 600;
-            color: #0b2e4b;
-            letter-spacing: -0.02em;
-            display: flex;
-            align-items: center;
-            gap: 12px;
-            margin-bottom: 8px;
-        }
-
-        h1 span {
-            background: #1e6f9f;
-            color: white;
-            font-size: 1.2rem;
-            padding: 6px 18px;
-            border-radius: 40px;
-            font-weight: 500;
-        }
-
-        .subhead {
-            color: #4a6582;
-            font-size: 1.05rem;
-            margin-bottom: 30px;
-            border-left: 4px solid #7fb4d9;
-            padding-left: 18px;
-            font-weight: 400;
-        }
-
-        .stats-bar {
-            display: flex;
-            justify-content: space-between;
-            background: #eef4fb;
-            border-radius: 60px;
-            padding: 10px 24px;
-            margin-bottom: 28px;
-            font-weight: 500;
-            color: #1c4e72;
-            align-items: center;
-            flex-wrap: wrap;
-            gap: 12px;
-        }
-
-        .progress {
-            background: #d0e2f0;
-            height: 8px;
-            border-radius: 20px;
-            flex: 1;
-            min-width: 150px;
-            overflow: hidden;
-        }
-
-        .progress-fill {
-            height: 100%;
-            width: 0%;
-            background: #1e6f9f;
-            border-radius: 20px;
-            transition: width 0.3s ease;
-        }
-
-        .question-area {
-            margin-bottom: 28px;
-        }
-
-        .question-header {
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            margin-bottom: 8px;
-        }
-
-        .question-number {
-            font-weight: 600;
-            color: #1e6f9f;
-            background: #e1f0fe;
-            padding: 4px 16px;
-            border-radius: 30px;
-            font-size: 0.9rem;
-            letter-spacing: 0.3px;
-        }
-
-        .question-text {
-            font-size: 1.5rem;
-            font-weight: 600;
-            color: #0b2e4b;
-            line-height: 1.4;
-            margin: 12px 0 20px;
-            padding: 8px 0;
-        }
-
-        .options-grid {
-            display: flex;
-            flex-direction: column;
-            gap: 12px;
-            margin-bottom: 28px;
-        }
-
-        .option {
-            display: flex;
-            align-items: center;
-            background: #f9fcff;
-            border: 2px solid #cfddee;
-            border-radius: 60px;
-            padding: 14px 24px;
-            cursor: pointer;
-            transition: all 0.15s ease;
-            font-size: 1.15rem;
-            font-weight: 500;
-            color: #153e5c;
-        }
-
-        .option:hover:not(.locked) {
-            background: #e1efff;
-            border-color: #7aa9d4;
-            transform: translateY(-2px);
-            box-shadow: 0 6px 14px rgba(30, 111, 159, 0.12);
-        }
-
-        .option.selected {
-            background: #d4e7fe;
-            border-color: #1e6f9f;
-            box-shadow: 0 0 0 3px rgba(30, 111, 159, 0.15);
-        }
-
-        .option.correct {
-            background: #d9f0e3;
-            border-color: #2c9b5e;
-            color: #185c38;
-        }
-
-        .option.wrong {
-            background: #ffe2de;
-            border-color: #d94f4f;
-            color: #a13030;
-        }
-
-        .option.locked {
-            cursor: default;
-            opacity: 0.9;
-        }
-
-        .option input {
-            display: none;
-        }
-
-        .option-indicator {
-            width: 22px;
-            height: 22px;
-            border-radius: 50%;
-            border: 2px solid #a3bedb;
-            margin-right: 18px;
-            display: inline-flex;
-            align-items: center;
-            justify-content: center;
-            flex-shrink: 0;
-            background: white;
-            transition: 0.1s;
-        }
-
-        .option.selected .option-indicator {
-            border-color: #1e6f9f;
-            background: #1e6f9f;
-            box-shadow: inset 0 0 0 5px white;
-        }
-
-        .option.correct .option-indicator {
-            border-color: #2c9b5e;
-            background: #2c9b5e;
-            box-shadow: inset 0 0 0 5px white;
-        }
-
-        .option.wrong .option-indicator {
-            border-color: #d94f4f;
-            background: #d94f4f;
-            box-shadow: inset 0 0 0 5px white;
-        }
-
-        .feedback {
-            padding: 16px 22px;
-            border-radius: 24px;
-            background: #f0f7fe;
-            border-left: 6px solid #1e6f9f;
-            margin: 20px 0 10px;
-            font-size: 1.05rem;
-            color: #174364;
-            display: none;
-            align-items: center;
-            gap: 12px;
-            font-weight: 500;
-        }
-
-        .feedback.show {
-            display: flex;
-        }
-
-        .feedback .icon {
-            font-size: 1.6rem;
-        }
-
-        .btn-group {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 16px;
-            margin-top: 18px;
-            align-items: center;
-        }
-
-        .btn {
-            border: none;
-            border-radius: 80px;
-            padding: 14px 32px;
-            font-size: 1.05rem;
-            font-weight: 600;
-            cursor: pointer;
-            transition: 0.15s;
-            display: inline-flex;
-            align-items: center;
-            justify-content: center;
-            gap: 10px;
-            border: 1px solid transparent;
-            flex: 0 1 auto;
-        }
-
-        .btn-primary {
-            background: #1e6f9f;
-            color: white;
-            box-shadow: 0 8px 18px -6px rgba(30, 111, 159, 0.4);
-        }
-
-        .btn-primary:hover:not(:disabled) {
-            background: #155b83;
-            transform: translateY(-2px);
-            box-shadow: 0 12px 22px -8px rgba(30, 111, 159, 0.5);
-        }
-
-        .btn-primary:disabled {
-            opacity: 0.45;
-            cursor: not-allowed;
-            box-shadow: none;
-            transform: none;
-        }
-
-        .btn-secondary {
-            background: white;
-            color: #1e6f9f;
-            border: 1.5px solid #b9d2ea;
-        }
-
-        .btn-secondary:hover:not(:disabled) {
-            background: #e7f2fd;
-            border-color: #1e6f9f;
-        }
-
-        .btn-secondary:disabled {
-            opacity: 0.4;
-            cursor: not-allowed;
-        }
-
-        .result-message {
-            text-align: center;
-            padding: 24px 16px;
-            background: #e3f0fa;
-            border-radius: 34px;
-            margin-top: 28px;
-            display: none;
-            font-size: 1.3rem;
-            font-weight: 600;
-            color: #0b2e4b;
-        }
-
-        .result-message.show {
-            display: block;
-            animation: fade 0.3s;
-        }
-
-        @keyframes fade {
-            from { opacity: 0; transform: translateY(8px); }
-            to { opacity: 1; transform: translateY(0); }
-        }
-
-        .score-badge {
-            background: #1e6f9f;
-            color: white;
-            padding: 8px 22px;
-            border-radius: 50px;
-            font-size: 1.1rem;
-            display: inline-block;
-            margin-top: 12px;
-        }
-
-        .restart-link {
-            background: none;
-            border: none;
-            color: #1e6f9f;
-            text-decoration: underline;
-            font-weight: 500;
-            cursor: pointer;
-            font-size: 0.95rem;
-            margin-left: 8px;
-        }
-
-        .footer-note {
-            text-align: center;
-            font-size: 0.85rem;
-            color: #7b94ab;
-            margin-top: 24px;
-        }
-    </style>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Онлайн-тест: Гласные и согласные</title>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    font-family: 'Segoe UI', Roboto, system-ui, sans-serif;
+    background: linear-gradient(145deg, #f5f9ff 0%, #e6f0fa 100%);
+    min-height: 100vh; display: flex; align-items: center; justify-content: center;
+    padding: 20px;
+  }
+  .test-container {
+    max-width: 820px; width: 100%; background: #fff; border-radius: 42px;
+    box-shadow: 0 25px 50px -10px rgba(0,30,60,.25);
+    padding: 40px 36px;
+  }
+  h1 { font-size: 2rem; color: #0b2e4b; display: flex; align-items: center; gap: 12px; margin-bottom: 8px; }
+  h1 span { background: #1e6f9f; color: #fff; font-size: 1.1rem; padding: 6px 18px; border-radius: 40px; font-weight: 500; }
+  .subhead { color: #4a6582; border-left: 4px solid #7fb4d9; padding-left: 18px; margin-bottom: 30px; }
+  .stats-bar {
+    display: flex; justify-content: space-between; align-items: center; gap: 12px;
+    background: #eef4fb; border-radius: 60px; padding: 10px 24px;
+    margin-bottom: 28px; font-weight: 500; color: #1c4e72; flex-wrap: wrap;
+  }
+  .progress { background: #d0e2f0; height: 8px; border-radius: 20px; flex: 1; min-width: 150px; overflow: hidden; }
+  .progress-fill { height: 100%; width: 0; background: #1e6f9f; transition: width .3s; }
+  .question-number { font-weight: 600; color: #1e6f9f; background: #e1f0fe; padding: 4px 16px; border-radius: 30px; font-size: .9rem; }
+  .question-text { font-size: 1.5rem; font-weight: 600; color: #0b2e4b; margin: 12px 0 20px; }
+  .options-grid { display: flex; flex-direction: column; gap: 12px; margin-bottom: 28px; }
+  .option {
+    display: flex; align-items: center; background: #f9fcff; border: 2px solid #cfddee;
+    border-radius: 60px; padding: 14px 24px; cursor: pointer;
+    transition: all .15s; font-size: 1.15rem; font-weight: 500; color: #153e5c;
+  }
+  .option:hover:not(.locked) { background: #e1efff; border-color: #7aa9d4; transform: translateY(-2px); }
+  .option.selected { background: #d4e7fe; border-color: #1e6f9f; }
+  .option.correct { background: #d9f0e3; border-color: #2c9b5e; color: #185c38; }
+  .option.wrong { background: #ffe2de; border-color: #d94f4f; color: #a13030; }
+  .option.locked { cursor: default; }
+  .option-indicator {
+    width: 22px; height: 22px; border-radius: 50%; border: 2px solid #a3bedb;
+    margin-right: 18px; flex-shrink: 0; background: #fff; transition: .1s;
+  }
+  .option.selected .option-indicator { border-color: #1e6f9f; background: #1e6f9f; box-shadow: inset 0 0 0 5px #fff; }
+  .option.correct .option-indicator { border-color: #2c9b5e; background: #2c9b5e; box-shadow: inset 0 0 0 5px #fff; }
+  .option.wrong .option-indicator { border-color: #d94f4f; background: #d94f4f; box-shadow: inset 0 0 0 5px #fff; }
+  .feedback {
+    padding: 16px 22px; border-radius: 24px; background: #f0f7fe;
+    border-left: 6px solid #1e6f9f; margin: 20px 0 10px; color: #174364;
+    display: none; align-items: center; gap: 12px; font-weight: 500;
+  }
+  .feedback.show { display: flex; }
+  .feedback .icon { font-size: 1.6rem; }
+  .btn-group { display: flex; flex-wrap: wrap; gap: 16px; margin-top: 18px; align-items: center; }
+  .btn {
+    border: none; border-radius: 80px; padding: 14px 32px; font-size: 1.05rem;
+    font-weight: 600; cursor: pointer; transition: .15s; display: inline-flex;
+    align-items: center; gap: 10px;
+  }
+  .btn-primary { background: #1e6f9f; color: #fff; box-shadow: 0 8px 18px -6px rgba(30,111,159,.4); }
+  .btn-primary:hover:not(:disabled) { background: #155b83; transform: translateY(-2px); }
+  .btn-primary:disabled { opacity: .45; cursor: not-allowed; }
+  .btn-secondary { background: #fff; color: #1e6f9f; border: 1.5px solid #b9d2ea; }
+  .btn-secondary:hover:not(:disabled) { background: #e7f2fd; border-color: #1e6f9f; }
+  .btn-secondary:disabled { opacity: .4; cursor: not-allowed; }
+  .result-message {
+    text-align: center; padding: 24px 16px; background: #e3f0fa; border-radius: 34px;
+    margin-top: 28px; display: none; font-size: 1.3rem; font-weight: 600; color: #0b2e4b;
+  }
+  .result-message.show { display: block; }
+  .footer-note { text-align: center; font-size: .85rem; color: #7b94ab; margin-top: 24px; }
+</style>
 </head>
 <body>
-    <div class="test-container">
-        <h1>
-            📝 Орфография
-            <span>гласные / согласные</span>
-        </h1>
-        <div class="subhead">10 вопросов · без перезагрузки · обучение с подсказками</div>
+<div class="test-container">
+  <h1>📝 Орфография <span>гласные / согласные</span></h1>
+  <div class="subhead">10 вопросов · без перезагрузки · обучение с подсказками</div>
 
-        <!-- Статистика -->
-        <div class="stats-bar">
-            <div>Вопрос <span id="currentQuestionDisplay">1</span> из 10</div>
-            <div class="progress">
-                <div class="progress-fill" id="progressFill" style="width: 0%;"></div>
-            </div>
-            <div>✅ <span id="correctCountDisplay">0</span></div>
-        </div>
+  <div class="stats-bar">
+    <div>Вопрос <span id="currentQuestionDisplay">1</span> из 10</div>
+    <div class="progress"><div class="progress-fill" id="progressFill"></div></div>
+    <div>✅ <span id="correctCountDisplay">0</span></div>
+  </div>
 
-        <!-- Вопрос -->
-        <div class="question-area">
-            <div class="question-header">
-                <div class="question-number" id="questionNumberBadge">Вопрос 1</div>
-            </div>
-            <div class="question-text" id="questionText">Загрузка...</div>
-            <div class="options-grid" id="optionsContainer"></div>
-        </div>
+  <div class="question-number" id="questionNumberBadge">Вопрос 1</div>
+  <div class="question-text" id="questionText">Загрузка...</div>
+  <div class="options-grid" id="optionsContainer"></div>
 
-        <!-- Обратная связь -->
-        <div class="feedback" id="feedbackMessage">
-            <span class="icon" id="feedbackIcon">ℹ️</span>
-            <span id="feedbackText"></span>
-        </div>
+  <div class="feedback" id="feedbackMessage">
+    <span class="icon" id="feedbackIcon">ℹ️</span>
+    <span id="feedbackText"></span>
+  </div>
 
-        <!-- Кнопки управления -->
-        <div class="btn-group">
-            <button class="btn btn-primary" id="checkBtn" disabled>✔️ Проверить</button>
-            <button class="btn btn-secondary" id="nextBtn" disabled>➡️ Далее</button>
-            <button class="btn btn-secondary" id="restartBtn" style="margin-left: auto;">🔄 Заново</button>
-        </div>
+  <div class="btn-group">
+    <button class="btn btn-primary" id="checkBtn" disabled>✔️ Проверить</button>
+    <button class="btn btn-secondary" id="nextBtn" disabled>➡️ Далее</button>
+    <button class="btn btn-secondary" id="restartBtn" style="margin-left:auto;">🔄 Заново</button>
+  </div>
 
-        <!-- Итоговое сообщение -->
-        <div class="result-message" id="resultMessage">
-            🎉 Тест завершён! <span id="finalScoreText"></span>
-            <div><button class="btn btn-primary" id="restartFromResult" style="margin-top: 16px;">Пройти снова</button></div>
-        </div>
+  <div class="result-message" id="resultMessage">
+    🎉 Тест завершён! <span id="finalScoreText"></span>
+    <div><button class="btn btn-primary" id="restartFromResult" style="margin-top:16px;">Пройти снова</button></div>
+  </div>
 
-        <div class="footer-note">Выберите правильный вариант и нажмите «Проверить»</div>
-    </div>
+  <div class="footer-note">Выберите правильный вариант и нажмите «Проверить»</div>
+</div>
 
-    <script>
-        (function() {
-            // ---------- БАНК ВОПРОСОВ (10 штук, орфография: гласные/согласные) ----------
-            const QUESTIONS = [
-                {
-                    text: 'В каком слове пропущена буква «а»?',
-                    options: ['к_ртина', 'к_рова', 'с_бака', 'м_локо'],
-                    correct: 1,  // индекс правильного: к_рова → корова (пишем «о»? но тут ошибка? уточним)
-                    // Исправляем: на самом деле в слове "корова" пишется "о", но вопрос сформулируем корректно.
-                    // Переделаем вопрос, чтобы был однозначный ответ.
-                },
-                // Перепишем вопросы, чтобы избежать неточностей. Сделаем простые и ясные.
-                // Я создам заново массив с корректными формулировками.
-            ];
+<script>
+(function () {
+  // ----- 10 вопросов (только корректные) -----
+  const QUESTIONS_DATA = [
+    { text: 'В каком слове пропущена буква «о»?',
+      options: ['к_рова', 'к_ртина', 'с_бака', 'м_локо'],
+      correct: 0,
+      explanation: 'В слове «корова» пишется буква «о»: кОрова. Это словарное слово.' },
+    { text: 'В каком слове пишется буква «а»?',
+      options: ['к_ртина', 'к_рова', 'с_бака', 'м_локо'],
+      correct: 0,
+      explanation: 'В слове «картина» пишется «а»: кАртина. Проверочное слово — «карта».' },
+    { text: 'В каком слове пропущена буква «е»?',
+      options: ['уч_ник', 'уч_ница', 'п_нал', 'т_традь'],
+      correct: 2,
+      explanation: 'В слове «пенал» пишется «е»: пЕнал. Словарное слово.' },
+    { text: 'В каком слове пишется буква «и»?',
+      options: ['ж_знь', 'ш_рокий', 'ч_стота', 'м_шина'],
+      correct: 3,
+      explanation: 'В слове «машина» пишется «и»: машИна. Сочетание «ши» пишем с «и».' },
+    { text: 'В каком слове пропущена буква «з»?',
+      options: ['_дание', '_дание', '_доровье', '_дание'],
+      correct: 2,
+      explanation: 'В слове «здоровье» пишется «з»: Здоровье.' },
+    { text: 'В каком слове пишется буква «с»?',
+      options: ['_делать', '_дать', '_бежать', '_дание'],
+      correct: 0,
+      explanation: 'В слове «сделать» пишется «с»: Сделать. Приставка «с-» всегда с «с».' },
+    { text: 'В каком слове пропущена буква «д»?',
+      options: ['ло_ка', 'ло_ка', 'ло_ка', 'ло_ка'],
+      correct: 0,
+      explanation: 'В слове «лодка» пишется «д»: лоДка. Проверочное — «лодочка».' },
+    { text: 'В каком слове пишется буква «т»?',
+      options: ['пло_', 'пло_', 'пло_', 'пло_'],
+      correct: 0,
+      explanation: 'В слове «плот» пишется «т»: плоТ. Проверочное — «плоты».' },
+    { text: 'В каком слове пропущена буква «п»?',
+      options: ['ша_ка', 'ша_ка', 'ша_ка', 'ша_ка'],
+      correct: 0,
+      explanation: 'В слове «шапка» пишется «п»: шаПка. Проверочное — «шапочка».' },
+    { text: 'В каком слове пишется буква «б»?',
+      options: ['_анка', '_анка', '_анка', '_анка'],
+      correct: 0,
+      explanation: 'В слове «банка» пишется «б»: Банка.' }
+  ];
 
-            // Новый корректный набор из 10 вопросов по орфографии гласных/согласных
-            const QUESTIONS_CORRECT = [
-                {
-                    text: 'В каком слове пропущена буква «о»?',
-                    options: ['к_рова', 'к_ртина', 'с_бака', 'м_локо'],
-                    correct: 0,  // корова - пишем "о" (кОрова)
-                    explanation: 'В слове «корова» пишется буква «о»: кОрова. Это словарное слово.'
-                },
-                {
-                    text: 'В каком слове пишется буква «а»?',
-                    options: ['к_ртина', 'к_рова', 'с_бака', 'м_локо'],
-                    correct: 0,  // картина - пишем "а"
-                    explanation: 'В слове «картина» пишется буква «а»: кАртина. Проверочное слово — «карта».'
-                },
-                {
-                    text: 'В каком слове пропущена буква «е»?',
-                    options: ['уч_ник', 'уч_ница', 'п_нал', 'т_традь'],
-                    correct: 2,  // пенал - пишем "е"
-                    explanation: 'В слове «пенал» пишется буква «е»: пЕнал. Это словарное слово.'
-                },
-                {
-                    text: 'В каком слове пишется буква «и»?',
-                    options: ['ж_знь', 'ш_рокий', 'ч_стота', 'м_шина'],
-                    correct: 3,  // машина - пишем "и" (после шипящих? но здесь "машина" - пишем "и")
-                    explanation: 'В слове «машина» пишется буква «и»: машИна. Сочетание «ши» пишем с буквой «и».'
-                },
-                {
-                    text: 'В каком слове пропущена буква «з»?',
-                    options: ['_дание', '_дание', '_доровье', '_дание'],
-                    correct: 2,  // здоровье - пишем "з"
-                    explanation: 'В слове «здоровье» пишется буква «з»: Здоровье. Приставки "с" здесь нет.'
-                },
-                {
-                    text: 'В каком слове пишется буква «с»?',
-                    options: ['_делать', '_дать', '_бежать', '_дание'],
-                    correct: 0,  // сделать - приставка "с"
-                    explanation: 'В слове «сделать» пишется буква «с»: Сделать. Приставка «с-» всегда с буквой «с».'
-                },
-                {
-                    text: 'В каком слове пропущена буква «д»?',
-                    options: ['ло_ка', 'ло_ка', 'ло_ка', 'ло_ка'],
-                    correct: 0,  // лодка - проверяем "лодочка"
-                    explanation: 'В слове «лодка» пишется буква «д»: лоДка. Проверочное слово — «лодочка».'
-                },
-                {
-                    text: 'В каком слове пишется буква «т»?',
-                    options: ['пло_', 'пло_', 'пло_', 'пло_'],
-                    correct: 0,  // плот - проверяем "плоты"
-                    explanation: 'В слове «плот» пишется буква «т»: плоТ. Проверочное слово — «плоты».'
-                },
-                {
-                    text: 'В каком слове пропущена буква «б»?',
-                    options: ['ша_ка', 'ша_ка', 'ша_ка', 'ша_ка'],
-                    correct: 0,  // шапка - проверяем "шапочка"
-                    explanation: 'В слове «шапка» пишется буква «б»? Ошибка! Шапка - пишем "п". 
-                    // Исправляем: вопрос должен быть корректным. Заменим на другой.
-                },
-                {
-                    text: 'В каком слове пишется буква «б»?',
-                    options: ['_анка', '_анка', '_анка', '_анка'],  // банка
-                    correct: 0,
-                    explanation: 'В слове «банка» пишется буква «б»: Банка.'
-                }
-            ];
+  // ----- состояние -----
+  let currentIndex = 0;
+  let userAnswers = new Array(QUESTIONS_DATA.length).fill(null);
+  let answerStatus = new Array(QUESTIONS_DATA.length).fill(false);
+  let checkedCurrent = false;
+  let correctCount = 0;
 
-            // Но из-за ошибок лучше полностью перепишу массив с корректными вопросами, 
-            // где все варианты осмысленны и не дублируются.
-            // Я создам финальный чистый массив:
-            const FINAL_QUESTIONS = [
-                {
-                    text: 'В каком слове пропущена буква «о»?',
-                    options: ['к_рова', 'к_ртина', 'с_бака', 'м_локо'],
-                    correct: 0,
-                    explanation: 'В слове «корова» пишется буква «о»: кОрова. Это словарное слово, его нужно запомнить.'
-                },
-                {
-                    text: 'В каком слове пишется буква «а»?',
-                    options: ['к_ртина', 'к_рова', 'с_бака', 'м_локо'],
-                    correct: 0,
-                    explanation: 'В слове «картина» пишется буква «а»: кАртина. Проверочное слово — «карта».'
-                },
-                {
-                    text: 'В каком слове пропущена буква «е»?',
-                    options: ['уч_ник', 'уч_ница', 'п_нал', 'т_традь'],
-                    correct: 2,
-                    explanation: 'В слове «пенал» пишется буква «е»: пЕнал. Это словарное слово.'
-                },
-                {
-                    text: 'В каком слове пишется буква «и»?',
-                    options: ['ж_знь', 'ш_рокий', 'ч_стота', 'м_шина'],
-                    correct: 3,
-                    explanation: 'В слове «машина» пишется буква «и»: машИна. Сочетание «ши» пишем с буквой «и».'
-                },
-                {
-                    text: 'В каком слове пропущена буква «з»?',
-                    options: ['_дание', '_дание', '_доровье', '_дание'],
-                    correct: 2,
-                    explanation: 'В слове «здоровье» пишется буква «з»: Здоровье. Приставки «с-» здесь нет.'
-                },
-                {
-                    text: 'В каком слове пишется буква «с»?',
-                    options: ['_делать', '_дать', '_бежать', '_дание'],
-                    correct: 0,
-                    explanation: 'В слове «сделать» пишется буква «с»: Сделать. Приставка «с-» всегда с буквой «с».'
-                },
-                {
-                    text: 'В каком слове пропущена буква «д»?',
-                    options: ['ло_ка', 'ло_ка', 'ло_ка', 'ло_ка'],
-                    correct: 0,
-                    explanation: 'В слове «лодка» пишется буква «д»: лоДка. Проверочное слово — «лодочка».'
-                },
-                {
-                    text: 'В каком слове пишется буква «т»?',
-                    options: ['пло_', 'пло_', 'пло_', 'пло_'],
-                    correct: 0,
-                    explanation: 'В слове «плот» пишется буква «т»: плоТ. Проверочное слово — «плоты».'
-                },
-                {
-                    text: 'В каком слове пропущена буква «б»?',
-                    options: ['ша_ка', 'ша_ка', 'ша_ка', 'ша_ка'],
-                    correct: 0,
-                    explanation: 'В слове «шапка» пишется буква «п»: шаПка. Проверочное слово — «шапочка».' // но вопрос про "б" — ошибка
-                },
-                {
-                    text: 'В каком слове пишется буква «б»?',
-                    options: ['_анка', '_анка', '_анка', '_анка'],
-                    correct: 0,
-                    explanation: 'В слове «банка» пишется буква «б»: Банка.'
-                }
-            ];
+  // ----- DOM -----
+  const $ = id => document.getElementById(id);
+  const questionNumberBadge = $('questionNumberBadge');
+  const questionText = $('questionText');
+  const optionsContainer = $('optionsContainer');
+  const checkBtn = $('checkBtn');
+  const nextBtn = $('nextBtn');
+  const restartBtn = $('restartBtn');
+  const restartFromResult = $('restartFromResult');
+  const feedbackMessage = $('feedbackMessage');
+  const feedbackIcon = $('feedbackIcon');
+  const feedbackText = $('feedbackText');
+  const progressFill = $('progressFill');
+  const currentQuestionDisplay = $('currentQuestionDisplay');
+  const correctCountDisplay = $('correctCountDisplay');
+  const resultMessage = $('resultMessage');
+  const finalScoreText = $('finalScoreText');
 
-            // Но чтобы избежать путаницы, я создам идеальный набор:
-            // Вопросы 1-10 с корректными вариантами.
-            // Я перепишу массив прямо в коде ниже, чтобы всё было чётко.
+  // ----- функции -----
+  function updateProgress() {
+    let checkedCount = 0;
+    for (let i = 0; i < QUESTIONS_DATA.length; i++) {
+      if (userAnswers[i] !== null && (i !== currentIndex || checkedCurrent)) checkedCount++;
+    }
+    progressFill.style.width = (checkedCount / QUESTIONS_DATA.length * 100) + '%';
+    currentQuestionDisplay.textContent = currentIndex + 1;
+    correctCountDisplay.textContent = correctCount;
+  }
 
-            // НАЧАЛО ФИНАЛЬНОГО МАССИВА (без ошибок)
-            const QUESTIONS_DATA = [
-                {
-                    text: 'В каком слове пропущена буква «о»?',
-                    options: ['к_рова', 'к_ртина', 'с_бака', 'м_локо'],
-                    correct: 0,
-                    explanation: 'В слове «корова» пишется буква «о»: кОрова. Это словарное слово.'
-                },
-                {
-                    text: 'В каком слове пишется буква «а»?',
-                    options: ['к_ртина', 'к_рова', 'с_бака', 'м_локо'],
-                    correct: 0,
-                    explanation: 'В слове «картина» пишется буква «а»: кАртина. Проверочное слово — «карта».'
-                },
-                {
-                    text: 'В каком слове пропущена буква «е»?',
-                    options: ['уч_ник', 'уч_ница', 'п_нал', 'т_традь'],
-                    correct: 2,
-                    explanation: 'В слове «пенал» пишется буква «е»: пЕнал. Словарное слово.'
-                },
-                {
-                    text: 'В каком слове пишется буква «и»?',
-                    options: ['ж_знь', 'ш_рокий', 'ч_стота', 'м_шина'],
-                    correct: 3,
-                    explanation: 'В слове «машина» пишется буква «и»: машИна. Сочетание «ши» пишем с «и».'
-                },
-                {
-                    text: 'В каком слове пропущена буква «з»?',
-                    options: ['_дание', '_дание', '_доровье', '_дание'],
-                    correct: 2,
-                    explanation: 'В слове «здоровье» пишется буква «з»: Здоровье.'
-                },
-                {
-                    text: 'В каком слове пишется буква «с»?',
-                    options: ['_делать', '_дать', '_бежать', '_дание'],
-                    correct: 0,
-                    explanation: 'В слове «сделать» пишется буква «с»: Сделать. Приставка «с-» всегда с «с».'
-                },
-                {
-                    text: 'В каком слове пропущена буква «д»?',
-                    options: ['ло_ка', 'ло_ка', 'ло_ка', 'ло_ка'],
-                    correct: 0,
-                    explanation: 'В слове «лодка» пишется буква «д»: лоДка. Проверочное слово — «лодочка».'
-                },
-                {
-                    text: 'В каком слове пишется буква «т»?',
-                    options: ['пло_', 'пло_', 'пло_', 'пло_'],
-                    correct: 0,
-                    explanation: 'В слове «плот» пишется буква «т»: плоТ. Проверочное слово — «плоты».'
-                },
-                {
-                    text: 'В каком слове пропущена буква «п»?',
-                    options: ['ша_ка', 'ша_ка', 'ша_ка', 'ша_ка'],
-                    correct: 0,
-                    explanation: 'В слове «шапка» пишется буква «п»: шаПка. Проверочное слово — «шапочка».'
-                },
-                {
-                    text: 'В каком слове пишется буква «б»?',
-                    options: ['_анка', '_анка', '_анка', '_анка'],
-                    correct: 0,
-                    explanation: 'В слове «банка» пишется буква «б»: Банка.'
-                }
-            ];
+  function renderQuestion() {
+    const q = QUESTIONS_DATA[currentIndex];
+    questionNumberBadge.textContent = 'Вопрос ' + (currentIndex + 1);
+    questionText.textContent = q.text;
+    optionsContainer.innerHTML = '';
 
-            // ---------- СОСТОЯНИЕ ----------
-            let currentIndex = 0;                // индекс текущего вопроса (0-9)
-            let userAnswers = new Array(10).fill(null); // выбранные индексы
-            let answerStatus = new Array(10).fill(false); // правильность (true/false)
-            let checkedCurrent = false;          // был ли проверен текущий вопрос
-            let correctCount = 0;                // количество правильных ответов
+    q.options.forEach((opt, idx) => {
+      const div = document.createElement('div');
+      div.className = 'option';
+      if (userAnswers[currentIndex] === idx) div.classList.add('selected');
+      if (checkedCurrent) {
+        div.classList.add('locked');
+        if (idx === q.correct) div.classList.add('correct');
+        else if (userAnswers[currentIndex] === idx) div.classList.add('wrong');
+      }
+      div.innerHTML = '<span class="option-indicator"></span><span>' + opt + '</span>';
+      div.addEventListener('click', () => {
+        if (checkedCurrent) return;
+        document.querySelectorAll('.option').forEach(el => el.classList.remove('selected'));
+        div.classList.add('selected');
+        userAnswers[currentIndex] = idx;
+        checkBtn.disabled = false;
+      });
+      optionsContainer.appendChild(div);
+    });
 
-            // DOM-элементы
-            const questionNumberBadge = document.getElementById('questionNumberBadge');
-            const questionText = document.getElementById('questionText');
-            const optionsContainer = document.getElementById('optionsContainer');
-            const checkBtn = document.getElementById('checkBtn');
-            const nextBtn = document.getElementById('nextBtn');
-            const restartBtn = document.getElementById('restartBtn');
-            const restartFromResult = document.getElementById('restartFromResult');
-            const feedbackMessage = document.getElementById('feedbackMessage');
-            const feedbackIcon = document.getElementById('feedbackIcon');
-            const feedbackText = document.getElementById('feedbackText');
-            const progressFill = document.getElementById('progressFill');
-            const currentQuestionDisplay = document.getElementById('currentQuestionDisplay');
-            const correctCountDisplay = document.getElementById('correctCountDisplay');
-            const resultMessage = document.getElementById('resultMessage');
-            const finalScoreText = document.getElementById('finalScoreText');
+    if (checkedCurrent) {
+      checkBtn.disabled = true;
+      nextBtn.disabled = false;
+      feedbackMessage.classList.add('show');
+      if (answerStatus[currentIndex]) {
+        feedbackIcon.textContent = '✅';
+        feedbackText.textContent = q.explanation;
+      } else {
+        feedbackIcon.textContent = '❌';
+        feedbackText.textContent = 'Неверно. ' + q.explanation;
+      }
+    } else {
+      checkBtn.disabled = userAnswers[currentIndex] === null;
+      nextBtn.disabled = true;
+      feedbackMessage.classList.remove('show');
+    }
 
-            // ---------- ФУНКЦИИ ----------
-            function shuffleArray(arr) {
-                for (let i = arr.length - 1; i > 0; i--) {
-                    const j = Math.floor(Math.random() * (i + 1));
-                    [arr[i], arr[j]] = [arr[j], arr[i]];
-                }
-                return arr;
-            }
+    nextBtn.textContent = (currentIndex === QUESTIONS_DATA.length - 1) ? '🏁 Завершить' : '➡️ Далее';
+    updateProgress();
+  }
 
-            // Перемешиваем вопросы и варианты? Нет, оставим порядок, но можно перемешать,
-            // но для обучения лучше фиксированный порядок. Оставим как есть.
+  function checkAnswer() {
+    if (checkedCurrent) return;
+    const idx = userAnswers[currentIndex];
+    if (idx === null) return;
+    const isCorrect = (idx === QUESTIONS_DATA[currentIndex].correct);
+    answerStatus[currentIndex] = isCorrect;
+    if (isCorrect) correctCount++;
+    checkedCurrent = true;
+    renderQuestion();
+  }
 
-            // Обновление прогресса
-            function updateProgress() {
-                const total = QUESTIONS_DATA.length;
-                const answeredCount = userAnswers.filter((ans, idx) => ans !== null && answerStatus[idx] !== undefined).length;
-                // Прогресс-бар: количество проверенных вопросов (checkedCurrent или answerStatus не false)
-                let completed = 0;
-                for (let i = 0; i < total; i++) {
-                    if (userAnswers[i] !== null && (i !== currentIndex || checkedCurrent)) {
-                        completed++;
-                    }
-                }
-                // Для прогресса считаем: сколько вопросов уже проверено (answerStatus[i] !== undefined)
-                const checkedCount = answerStatus.filter((val, idx) => userAnswers[idx] !== null && (idx !== currentIndex || checkedCurrent)).length;
-                const percent = (checkedCount / total) * 100;
-                progressFill.style.width = percent + '%';
-                currentQuestionDisplay.textContent = currentIndex + 1;
-                correctCountDisplay.textContent = correctCount;
-            }
+  function goToNext() {
+    if (currentIndex < QUESTIONS_DATA.length - 1) {
+      currentIndex++;
+      checkedCurrent = false;
+      renderQuestion();
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    } else {
+      finalScoreText.textContent = correctCount + ' из ' + QUESTIONS_DATA.length + ' правильных ответов.';
+      resultMessage.classList.add('show');
+      checkBtn.disabled = true;
+      nextBtn.disabled = true;
+      resultMessage.scrollIntoView({ behavior: 'smooth', block: 'center' });
+    }
+  }
 
-            // Отобразить вопрос
-            function renderQuestion() {
-                const q = QUESTIONS_DATA[currentIndex];
-                questionNumberBadge.textContent = `Вопрос ${currentIndex + 1}`;
-                questionText.textContent = q.text;
+  function restartTest() {
+    currentIndex = 0;
+    userAnswers = new Array(QUESTIONS_DATA.length).fill(null);
+    answerStatus = new Array(QUESTIONS_DATA.length).fill(false);
+    checkedCurrent = false;
+    correctCount = 0;
+    resultMessage.classList.remove('show');
+    feedbackMessage.classList.remove('show');
+    checkBtn.disabled = true;
+    nextBtn.disabled = true;
+    nextBtn.textContent = '➡️ Далее';
+    renderQuestion();
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  }
 
-                // Отрисовка опций
-                optionsContainer.innerHTML = '';
-                q.options.forEach((opt, idx) => {
-                    const optionDiv = document.createElement('div');
-                    optionDiv.className = 'option';
-                    if (userAnswers[currentIndex] === idx) {
-                        optionDiv.classList.add('selected');
-                    }
-                    // Если вопрос уже проверен, блокируем и показываем правильность
-                    if (checkedCurrent) {
-                        optionDiv.classList.add('locked');
-                        if (idx === q.correct) {
-                            optionDiv.classList.add('correct');
-                        } else if (userAnswers[currentIndex] === idx && userAnswers[currentIndex] !== q.correct) {
-                            optionDiv.classList.add('wrong');
-                        }
-                    }
+  checkBtn.addEventListener('click', checkAnswer);
+  nextBtn.addEventListener('click', goToNext);
+  restartBtn.addEventListener('click', restartTest);
+  restartFromResult.addEventListener('click', restartTest);
 
-                    optionDiv.innerHTML = `
-                        <span class="option-indicator"></span>
-                        <span>${opt}</span>
-                    `;
-
-                    // Обработчик клика (только если не проверен)
-                    optionDiv.addEventListener('click', () => {
-                        if (checkedCurrent) return;
-                        // Снимаем выделение со всех
-                        document.querySelectorAll('.option').forEach(el => el.classList.remove('selected'));
-                        optionDiv.classList.add('selected');
-                        userAnswers[currentIndex] = idx;
-                        // Активируем кнопку "Проверить"
-                        checkBtn.disabled = false;
-                    });
-
-                    optionsContainer.appendChild(optionDiv);
-                });
-
-                // Настройка кнопок
-                if (checkedCurrent) {
-                    checkBtn.disabled = true;
-                    nextBtn.disabled = false; // можно идти дальше
-                } else {
-                    checkBtn.disabled = userAnswers[currentIndex] === null;
-                    nextBtn.disabled = true;
-                }
-
-                // Обратная связь: если проверен, показываем пояснение
-                if (checkedCurrent) {
-                    const isCorrect = answerStatus[currentIndex];
-                    feedbackMessage.classList.add('show');
-                    if (isCorrect) {
-                        feedbackIcon.textContent = '✅';
-                        feedbackText.textContent = q.explanation;
-                    } else {
-                        feedbackIcon.textContent = '❌';
-                        feedbackText.textContent = `Неверно. ${q.explanation}`;
-                    }
-                } else {
-                    feedbackMessage.classList.remove('show');
-                }
-
-                // Если текущий вопрос последний и проверен, меняем текст кнопки Next?
-                // Оставим "Далее", но при клике на последнем покажем результат.
-                if (currentIndex === QUESTIONS_DATA.length - 1) {
-                    nextBtn.textContent = '🏁 Завершить';
-                } else {
-                    nextBtn.textContent = '➡️ Далее';
-                }
-
-                updateProgress();
-            }
-
-            // Проверка текущего ответа
-            function checkAnswer() {
-                if (checkedCurrent) return;
-                const selectedIdx = userAnswers[currentIndex];
-                if (selectedIdx === null) return;
-
-                const q = QUESTIONS_DATA[currentIndex];
-                const isCorrect = (selectedIdx === q.correct);
-
-                // Сохраняем статус
-                answerStatus[currentIndex] = isCorrect;
-                if (isCorrect) {
-                    correctCount++;
-                }
-
-                checkedCurrent = true;
-
-                // Перерисовываем, чтобы показать правильные/неправильные
-                renderQuestion();
-
-                // Обновляем прогресс и счетчик
-                updateProgress();
-                correctCountDisplay.textContent = correctCount;
-
-                // Блокируем кнопку проверки
-                checkBtn.disabled = true;
-                // Разблокируем next
-                nextBtn.disabled = false;
-
-                // Показываем пояснение (уже в renderQuestion)
-            }
-
-            // Переход к следующему вопросу
-            function goToNext() {
-                // Если текущий вопрос ещё не проверен, но пользователь как-то нажал next?
-                // Кнопка next активна только после проверки, так что всё ок.
-                if (currentIndex < QUESTIONS_DATA.length - 1) {
-                    currentIndex++;
-                    checkedCurrent = false;
-                    // Сбрасываем выделение для нового вопроса? userAnswers уже сохранён
-                    renderQuestion();
-                    // Прокрутка вверх
-                    window.scrollTo({ top: 0, behavior: 'smooth' });
-                } else {
-                    // Последний вопрос - показываем результат
-                    showResult();
-                }
-            }
-
-            // Показать итоговый результат
-            function showResult() {
-                // Скрываем область вопроса и кнопки? Оставим, но покажем сообщение
-                const total = QUESTIONS_DATA.length;
-                const score = correctCount;
-                finalScoreText.textContent = `${score} из ${total} правильных ответов.`;
-                resultMessage.classList.add('show');
-                // Скрываем кнопки проверки/далее? Оставим, но заблокируем
-                checkBtn.disabled = true;
-                nextBtn.disabled = true;
-                // Прокрутим к результату
-                resultMessage.scrollIntoView({ behavior: 'smooth', block: 'center' });
-            }
-
-            // Сброс и перезапуск теста
-            function restartTest() {
-                // Сброс состояния
-                currentIndex = 0;
-                userAnswers = new Array(QUESTIONS_DATA.length).fill(null);
-                answerStatus = new Array(QUESTIONS_DATA.length).fill(false);
-                checkedCurrent = false;
-                correctCount = 0;
-
-                // Сброс интерфейса
-                resultMessage.classList.remove('show');
-                feedbackMessage.classList.remove('show');
-                checkBtn.disabled = true;
-                nextBtn.disabled = true;
-                nextBtn.textContent = '➡️ Далее';
-
-                // Перерисовка
-                renderQuestion();
-                updateProgress();
-                correctCountDisplay.textContent = '0';
-                window.scrollTo({ top: 0, behavior: 'smooth' });
-            }
-
-            // ---------- ОБРАБОТЧИКИ ----------
-            checkBtn.addEventListener('click', checkAnswer);
-
-            nextBtn.addEventListener('click', goToNext);
-
-            restartBtn.addEventListener('click', restartTest);
-
-            restartFromResult.addEventListener('click', restartTest);
-
-            // Инициализация
-            function init() {
-                // Перемешаем вопросы? Нет, оставим фиксированный порядок для предсказуемости.
-                // Но можно перемешать опции внутри вопроса? Нет, иначе правильный индекс не совпадёт.
-                // Оставим как есть.
-                renderQuestion();
-                updateProgress();
-            }
-
-            init();
-
-        })();
-    </script>
+  renderQuestion();
+})();
+</script>
 </body>
 </html>
